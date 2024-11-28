@@ -1,5 +1,6 @@
 QTSampleApp_autogen/timestamp: \
 	/home/luismi/Documents/repos/QTSampleApp/CMakeLists.txt \
+	/home/luismi/Documents/repos/QTSampleApp/bitmap.h \
 	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/.qtc/package-manager/auto-setup.cmake \
 	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/CMakeFiles/3.31.0/CMakeCXXCompiler.cmake \
 	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/CMakeFiles/3.31.0/CMakeSystem.cmake \
@@ -7,6 +8,8 @@ QTSampleApp_autogen/timestamp: \
 	/home/luismi/Documents/repos/QTSampleApp/main.cpp \
 	/home/luismi/Documents/repos/QTSampleApp/mainwindow.cpp \
 	/home/luismi/Documents/repos/QTSampleApp/mainwindow.h \
+	/home/luismi/Documents/repos/QTSampleApp/steganography.cpp \
+	/home/luismi/Documents/repos/QTSampleApp/steganography.h \
 	/usr/include/alloca.h \
 	/usr/include/asm-generic/errno-base.h \
 	/usr/include/asm-generic/errno.h \

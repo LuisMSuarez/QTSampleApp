@@ -73,6 +73,14 @@ build CMakeFiles/QTSampleApp.dir/mainwindow.cpp.o: CXX_COMPILER__QTSampleApp_uns
   OBJECT_DIR = CMakeFiles/QTSampleApp.dir
   OBJECT_FILE_DIR = CMakeFiles/QTSampleApp.dir
 
+build CMakeFiles/QTSampleApp.dir/steganography.cpp.o: CXX_COMPILER__QTSampleApp_unscanned_Debug /home/luismi/Documents/repos/QTSampleApp/steganography.cpp || cmake_object_order_depends_target_QTSampleApp
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/QTSampleApp.dir/steganography.cpp.o.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -I/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/include -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib64/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui
+  OBJECT_DIR = CMakeFiles/QTSampleApp.dir
+  OBJECT_FILE_DIR = CMakeFiles/QTSampleApp.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target QTSampleApp
@@ -81,7 +89,7 @@ build CMakeFiles/QTSampleApp.dir/mainwindow.cpp.o: CXX_COMPILER__QTSampleApp_uns
 #############################################
 # Link the executable QTSampleApp
 
-build QTSampleApp: CXX_EXECUTABLE_LINKER__QTSampleApp_Debug CMakeFiles/QTSampleApp.dir/QTSampleApp_autogen/mocs_compilation.cpp.o CMakeFiles/QTSampleApp.dir/main.cpp.o CMakeFiles/QTSampleApp.dir/mainwindow.cpp.o | /usr/lib64/libQt6Widgets.so.6.8.0 /usr/lib64/libQt6Gui.so.6.8.0 /usr/lib64/libGLX.so /usr/lib64/libOpenGL.so /usr/lib64/libQt6Core.so.6.8.0 || QTSampleApp_autogen
+build QTSampleApp: CXX_EXECUTABLE_LINKER__QTSampleApp_Debug CMakeFiles/QTSampleApp.dir/QTSampleApp_autogen/mocs_compilation.cpp.o CMakeFiles/QTSampleApp.dir/main.cpp.o CMakeFiles/QTSampleApp.dir/mainwindow.cpp.o CMakeFiles/QTSampleApp.dir/steganography.cpp.o | /usr/lib64/libQt6Widgets.so.6.8.0 /usr/lib64/libQt6Gui.so.6.8.0 /usr/lib64/libGLX.so /usr/lib64/libOpenGL.so /usr/lib64/libQt6Core.so.6.8.0 || QTSampleApp_autogen
   DEP_FILE = CMakeFiles/QTSampleApp.dir/link.d
   FLAGS = -DQT_QML_DEBUG -g
   LINK_FLAGS = -Wl,--dependency-file,CMakeFiles/QTSampleApp.dir/link.d

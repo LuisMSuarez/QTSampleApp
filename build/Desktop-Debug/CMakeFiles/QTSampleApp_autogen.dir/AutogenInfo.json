@@ -240,9 +240,21 @@
 	"HEADERS" : 
 	[
 		[
+			"/home/luismi/Documents/repos/QTSampleApp/bitmap.h",
+			"MU",
+			"EWIEGA46WW/moc_bitmap.cpp",
+			null
+		],
+		[
 			"/home/luismi/Documents/repos/QTSampleApp/mainwindow.h",
 			"MU",
 			"EWIEGA46WW/moc_mainwindow.cpp",
+			null
+		],
+		[
+			"/home/luismi/Documents/repos/QTSampleApp/steganography.h",
+			"MU",
+			"EWIEGA46WW/moc_steganography.cpp",
 			null
 		]
 	],
@@ -307,7 +319,12 @@
 	"SOURCES" : 
 	[
 		[ "/home/luismi/Documents/repos/QTSampleApp/main.cpp", "MU", null ],
-		[ "/home/luismi/Documents/repos/QTSampleApp/mainwindow.cpp", "MU", null ]
+		[ "/home/luismi/Documents/repos/QTSampleApp/mainwindow.cpp", "MU", null ],
+		[
+			"/home/luismi/Documents/repos/QTSampleApp/steganography.cpp",
+			"MU",
+			null
+		]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],
