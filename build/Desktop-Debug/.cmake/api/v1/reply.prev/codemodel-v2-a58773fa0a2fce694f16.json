@@ -1,0 +1,70 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-163bcc4585d7149329ee.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "QTSampleApp",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "QTSampleApp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-QTSampleApp-Debug-fe2a6b3ec66d142ff5af.json",
+					"name" : "QTSampleApp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "QTSampleApp_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-QTSampleApp_autogen-Debug-d754ae542bed9716eef7.json",
+					"name" : "QTSampleApp_autogen",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug",
+		"source" : "/home/luismi/Documents/repos/QTSampleApp"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

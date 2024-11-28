@@ -1,5 +1,6 @@
 # ninja log v6
 2	424	1732761170437916574	QTSampleApp_autogen/timestamp	5f4825a4e85b327e
+3697	4024	1732761173721250905	QTSampleApp	f25443331dfe68f2
 2	424	1732761170437916574	QTSampleApp_autogen/mocs_compilation.cpp	5f4825a4e85b327e
 2	424	1732761170437916574	QTSampleApp_autogen/include/ui_mainwindow.h	5f4825a4e85b327e
 2	424	1732761170437916574	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/timestamp	5f4825a4e85b327e
@@ -8,4 +9,19 @@
 428	2948	1732761170451249912	CMakeFiles/QTSampleApp.dir/main.cpp.o	1b6a2d684bdb09be
 428	3492	1732761170451249912	CMakeFiles/QTSampleApp.dir/mainwindow.cpp.o	fa0cc0776708fc93
 427	3697	1732761170451249912	CMakeFiles/QTSampleApp.dir/QTSampleApp_autogen/mocs_compilation.cpp.o	7699c7732097947b
-3697	4024	1732761173721250905	QTSampleApp	f25443331dfe68f2
+3	532	1732761701607803042	QTSampleApp_autogen/timestamp	5f4825a4e85b327e
+3	532	1732761701607803042	QTSampleApp_autogen/mocs_compilation.cpp	5f4825a4e85b327e
+3	532	1732761701607803042	QTSampleApp_autogen/include/ui_mainwindow.h	5f4825a4e85b327e
+3	532	1732761701607803042	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/timestamp	5f4825a4e85b327e
+3	532	1732761701607803042	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/mocs_compilation.cpp	5f4825a4e85b327e
+3	532	1732761701607803042	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/include/ui_mainwindow.h	5f4825a4e85b327e
+532	2898	1732761701621136379	CMakeFiles/QTSampleApp.dir/main.cpp.o	1b6a2d684bdb09be
+532	3589	1732761701617803044	CMakeFiles/QTSampleApp.dir/QTSampleApp_autogen/mocs_compilation.cpp.o	7699c7732097947b
+4	45	1732761736364478970	QTSampleApp_autogen/timestamp	5f4825a4e85b327e
+4	45	1732761736364478970	QTSampleApp_autogen/mocs_compilation.cpp	5f4825a4e85b327e
+4	45	1732761736364478970	QTSampleApp_autogen/include/ui_mainwindow.h	5f4825a4e85b327e
+4	45	1732761736364478970	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/timestamp	5f4825a4e85b327e
+4	45	1732761736364478970	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/mocs_compilation.cpp	5f4825a4e85b327e
+4	45	1732761736364478970	/home/luismi/Documents/repos/QTSampleApp/build/Desktop-Debug/QTSampleApp_autogen/include/ui_mainwindow.h	5f4825a4e85b327e
+46	6057	1732761736407812314	CMakeFiles/QTSampleApp.dir/mainwindow.cpp.o	fa0cc0776708fc93
+6059	6410	1732761742421147250	QTSampleApp	f25443331dfe68f2
