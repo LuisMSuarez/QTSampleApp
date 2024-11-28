@@ -419,3 +419,6 @@
  mdp:/usr/lib64/gcc/x86_64-suse-linux/14/include/stdarg.h
  mdp:/usr/lib64/gcc/x86_64-suse-linux/14/include/stdbool.h
  mdp:/usr/lib64/gcc/x86_64-suse-linux/14/include/stddef.h
+/home/luismi/Documents/repos/QTSampleApp/bitmap.h
+/home/luismi/Documents/repos/QTSampleApp/steganography.h
+/home/luismi/Documents/repos/QTSampleApp/steganography.cpp

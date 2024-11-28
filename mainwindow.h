@@ -15,7 +15,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_pushButtonFileSelection_clicked();
+
+    void on_pushButtonDataFileSelection_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QImage *sourceImage;
+    void openImage();
+    void loadTextFile();
 };
 #endif // MAINWINDOW_H
