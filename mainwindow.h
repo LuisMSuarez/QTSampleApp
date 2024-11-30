@@ -17,13 +17,17 @@ public:
 
 private slots:
     void on_pushButtonFileSelection_clicked();
-
     void on_pushButtonDataFileSelection_clicked();
+    void on_pushButtonEmbed_clicked();
+
+    void on_pushButtonExtract_clicked();
 
 private:
     Ui::MainWindow *ui;
     QImage *sourceImage;
     void openImage();
     void loadTextFile();
+    QString selectedBitmapFilePath;
+    QString selectedDataFilePath;
 };
 #endif // MAINWINDOW_H
