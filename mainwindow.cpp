@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "steganography.h"
 #include <QtWidgets>
+#include <filesystem>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,10 +10,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     sourceImage=new QImage();
-    ui->graphicsView->hide();
-    ui->labelSourceBitmapFilePath->setText("Select bitmap file.");
+    ui->labelSourceBitmapFilePath->setText("Select bitmap file");
     ui->plainTextEdit->setReadOnly(true);
-    ui->plainTextEdit->hide();
+    ui->gridLayout->setColumnStretch( 0, 0 ) ; // Give column 0 no stretch ability
+    ui->gridLayout->setColumnStretch( 1, 1 ) ; // Give column 1 stretch ability of ratio 1
 }
 
 MainWindow::~MainWindow()
@@ -29,9 +31,9 @@ void MainWindow::on_pushButtonFileSelection_clicked()
 
     if (dialog.exec() == QDialog::Accepted)
     {
-        QString fileName = dialog.selectedFiles().first();
-        ui->labelSourceBitmapFilePath->setText(fileName);
-        //QMessageBox::information(this, "File selection", fileName);
+        selectedBitmapFilePath = dialog.selectedFiles().first();
+        std::string fileName = std::filesystem::path(selectedBitmapFilePath.toStdString()).filename();
+        ui->labelSourceBitmapFilePath->setText(QString::fromStdString(fileName));
         qDebug() << "Selected file:" << fileName;
         openImage();
     }
@@ -39,7 +41,7 @@ void MainWindow::on_pushButtonFileSelection_clicked()
 
 void MainWindow::openImage()
 {
-    sourceImage->load(ui->labelSourceBitmapFilePath->text());
+    sourceImage->load(selectedBitmapFilePath);
     QGraphicsScene* scene=new QGraphicsScene() ;
     ui->graphicsView->setScene(scene);
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(*sourceImage));
@@ -55,9 +57,9 @@ void MainWindow::on_pushButtonDataFileSelection_clicked()
 
     if (dialog.exec() == QDialog::Accepted)
     {
-        QString fileName = dialog.selectedFiles().first();
-        ui->labelDataFileSourcePath->setText(fileName);
-        //QMessageBox::information(this, "File selection", fileName);
+        selectedDataFilePath = dialog.selectedFiles().first();
+        std::string fileName = std::filesystem::path(selectedDataFilePath.toStdString()).filename();
+        ui->labelDataFileSourcePath->setText(QString::fromStdString(fileName));
         qDebug() << "Selected file:" << fileName;
         loadTextFile();
     }
@@ -65,7 +67,7 @@ void MainWindow::on_pushButtonDataFileSelection_clicked()
 
 void MainWindow::loadTextFile()
 {
-    QFile file(ui->labelDataFileSourcePath->text());
+    QFile file(selectedDataFilePath);
     file.open(QIODevice::Text | QIODevice::ReadOnly);
     QString content;
     while(!file.atEnd())
@@ -75,5 +77,23 @@ void MainWindow::loadTextFile()
     ui->plainTextEdit->setPlainText(content);
     ui->plainTextEdit->show();
     file.close();
+}
+
+void MainWindow::on_pushButtonEmbed_clicked()
+{
+    steganographyLib::Steganography steg;
+    steg.embed(selectedBitmapFilePath.toStdString(),
+               selectedDataFilePath.toStdString(),
+               selectedBitmapFilePath.toStdString() + ".enc.bmp",
+               ui->spinBoxBitsPerPixel->value());
+}
+
+
+void MainWindow::on_pushButtonExtract_clicked()
+{
+    steganographyLib::Steganography steg;
+    steg.extract(selectedBitmapFilePath.toStdString(),
+               selectedBitmapFilePath.toStdString() + ".extracted",
+               ui->spinBoxBitsPerPixel->value());
 }
 
