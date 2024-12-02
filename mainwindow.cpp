@@ -85,25 +85,54 @@ void MainWindow::loadTextFile()
 
 void MainWindow::on_pushButtonEmbed_clicked()
 {
-    if (selectedBitmapFilePath == "")
+    if (selectedBitmapFilePath.isNull() ||
+        selectedBitmapFilePath.isEmpty())
     {
         QMessageBox::critical(this, "Error", "Must select bitmap file first", QMessageBox::Ok);
         return;
     }
 
-    steganographyLib::Steganography steg;
-    steg.embed(selectedBitmapFilePath.toStdString(),
-               selectedDataFilePath.toStdString(),
-               selectedBitmapFilePath.toStdString() + ".enc.bmp",
-               ui->spinBoxBitsPerPixel->value());
+    if (selectedDataFilePath.isNull() ||
+        selectedDataFilePath.isEmpty())
+    {
+        QMessageBox::critical(this, "Error", "Must select data file first", QMessageBox::Ok);
+        return;
+    }
+
+    try
+    {
+        steganographyLib::Steganography steg;
+        steg.embed(selectedBitmapFilePath.toStdString(),
+                   selectedDataFilePath.toStdString(),
+                   selectedBitmapFilePath.toStdString() + ".enc.bmp",
+                   ui->spinBoxBitsPerPixel->value());
+    }
+    catch (std::runtime_error &e)
+    {
+        QMessageBox::critical(this, "Encoding error", QString("Error during encoding operation\n") + e.what(), QMessageBox::Ok);
+    }
 }
 
 
 void MainWindow::on_pushButtonExtract_clicked()
 {
-    steganographyLib::Steganography steg;
-    steg.extract(selectedBitmapFilePath.toStdString(),
-               selectedBitmapFilePath.toStdString() + ".extracted",
-               ui->spinBoxBitsPerPixel->value());
+    if (selectedBitmapFilePath.isNull() ||
+        selectedBitmapFilePath.isEmpty())
+    {
+        QMessageBox::critical(this, "Error", "Must select bitmap file first", QMessageBox::Ok);
+        return;
+    }
+
+    try
+    {
+        steganographyLib::Steganography steg;
+        steg.extract(selectedBitmapFilePath.toStdString(),
+                   selectedBitmapFilePath.toStdString() + ".extracted",
+                   ui->spinBoxBitsPerPixel->value());
+    }
+    catch (std::runtime_error &e)
+    {
+        QMessageBox::critical(this, "Extract error", QString("Error during extract operation\n") + e.what(), QMessageBox::Ok);
+    }
 }
 
