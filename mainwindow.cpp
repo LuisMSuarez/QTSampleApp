@@ -44,7 +44,11 @@ void MainWindow::openImage()
     sourceImage->load(selectedBitmapFilePath);
     QGraphicsScene* scene=new QGraphicsScene() ;
     ui->graphicsView->setScene(scene);
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(*sourceImage));
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
+                QPixmap::fromImage(*sourceImage).scaled(
+                    ui->graphicsView->width(),
+                    ui->graphicsView->height(),
+                    Qt::KeepAspectRatio));
     scene->addItem(item);
     ui->graphicsView->show();
  }
@@ -81,6 +85,12 @@ void MainWindow::loadTextFile()
 
 void MainWindow::on_pushButtonEmbed_clicked()
 {
+    if (selectedBitmapFilePath == "")
+    {
+        QMessageBox::critical(this, "Error", "Must select bitmap file first", QMessageBox::Ok);
+        return;
+    }
+
     steganographyLib::Steganography steg;
     steg.embed(selectedBitmapFilePath.toStdString(),
                selectedDataFilePath.toStdString(),
