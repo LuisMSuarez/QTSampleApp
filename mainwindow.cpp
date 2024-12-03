@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "steganography.h"
-#include <QtWidgets>
 #include <filesystem>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -12,10 +11,12 @@ MainWindow::MainWindow(QWidget *parent)
     sourceImage=new QImage();
     ui->labelSourceBitmapFilePath->setText("Select bitmap file");
     ui->plainTextEdit->setReadOnly(true);
+    bitmapGraphicsScene=new QGraphicsScene();
 }
 
 MainWindow::~MainWindow()
 {
+    delete bitmapGraphicsScene;
     delete sourceImage;
     delete ui;
 }
@@ -40,14 +41,13 @@ void MainWindow::on_pushButtonFileSelection_clicked()
 void MainWindow::openImage()
 {
     sourceImage->load(selectedBitmapFilePath);
-    QGraphicsScene* scene=new QGraphicsScene() ;
-    ui->graphicsView->setScene(scene);
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(
-                QPixmap::fromImage(*sourceImage).scaled(
-                    ui->graphicsView->width(),
-                    ui->graphicsView->height(),
-                    Qt::KeepAspectRatio));
-    scene->addItem(item);
+    bitmapGraphicsScene->addPixmap(
+                QPixmap::fromImage(*sourceImage)
+                    .scaled(
+                             ui->graphicsView->width(),
+                             ui->graphicsView->height(),
+                             Qt::KeepAspectRatio));
+    ui->graphicsView->setScene(bitmapGraphicsScene);
     ui->graphicsView->show();
  }
 

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +25,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QImage *sourceImage;
+    QGraphicsScene* bitmapGraphicsScene;
     void openImage();
     void loadTextFile();
     QString selectedBitmapFilePath;
