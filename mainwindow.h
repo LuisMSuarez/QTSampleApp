@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,12 +20,12 @@ private slots:
     void on_pushButtonFileSelection_clicked();
     void on_pushButtonDataFileSelection_clicked();
     void on_pushButtonEmbed_clicked();
-
     void on_pushButtonExtract_clicked();
 
 private:
     Ui::MainWindow *ui;
     QImage *sourceImage;
+    QGraphicsScene* bitmapGraphicsScene;
     void openImage();
     void loadTextFile();
     QString selectedBitmapFilePath;
