@@ -12,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent)
     sourceImage=new QImage();
     ui->labelSourceBitmapFilePath->setText("Select bitmap file");
     ui->plainTextEdit->setReadOnly(true);
-    ui->gridLayout->setColumnStretch( 0, 0 ) ; // Give column 0 no stretch ability
-    ui->gridLayout->setColumnStretch( 1, 1 ) ; // Give column 1 stretch ability of ratio 1
 }
 
 MainWindow::~MainWindow()
@@ -106,6 +104,7 @@ void MainWindow::on_pushButtonEmbed_clicked()
                    selectedDataFilePath.toStdString(),
                    selectedBitmapFilePath.toStdString() + ".enc.bmp",
                    ui->spinBoxBitsPerPixel->value());
+        ui->statusbar->showMessage("Embed operation complete", 5000);
     }
     catch (std::runtime_error &e)
     {
@@ -129,6 +128,7 @@ void MainWindow::on_pushButtonExtract_clicked()
         steg.extract(selectedBitmapFilePath.toStdString(),
                    selectedBitmapFilePath.toStdString() + ".extracted",
                    ui->spinBoxBitsPerPixel->value());
+        ui->statusbar->showMessage("Extract operation complete", 5000);
     }
     catch (std::runtime_error &e)
     {

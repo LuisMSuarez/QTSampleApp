@@ -19,7 +19,6 @@ private slots:
     void on_pushButtonFileSelection_clicked();
     void on_pushButtonDataFileSelection_clicked();
     void on_pushButtonEmbed_clicked();
-
     void on_pushButtonExtract_clicked();
 
 private:
