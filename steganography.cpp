@@ -1,6 +1,8 @@
 #include <iostream>   // std::cout
 #include <fstream>    // std::*fstream
 #include <filesystem> // std::filesystem::file_size
+#include <cassert>    // assert
+#include <cmath>      // ceil
 #include "steganography.h"
 
 #define FILE_CHUNK_SIZE 1024
@@ -11,12 +13,11 @@ using namespace bmp;
 
 steganographyLib::Steganography::Steganography() noexcept
 {
-    std::cout << "Steganography constructor invoked";
+    m_progressCallback = nullptr;
 }
 
 steganographyLib::Steganography::~Steganography() noexcept
 {
-    std::cout << "Steganography destructor invoked";
 }
 
 void steganographyLib::Steganography::embed(const std::string &originalBitmapFilePath, const std::string &sourceDataFilePath, const std::string &destinationBitmapDataFilePath, u_int8_t bitsPerPixel)
@@ -25,11 +26,11 @@ void steganographyLib::Steganography::embed(const std::string &originalBitmapFil
 
     // Open and verify sourceDataFilePath
     auto sourceDataFileStream = ifstream(sourceDataFilePath, ios::binary);
-    if (!sourceDataFileStream || 
+    if (!sourceDataFileStream ||
         !sourceDataFileStream.is_open() ||
         sourceDataFileStream.bad())
     {
-        throw runtime_error("Could not open source data file at " 
+        throw runtime_error("Could not open source data file at "
             + sourceDataFilePath
             + " aborting embed operation.");
     }
@@ -39,8 +40,8 @@ void steganographyLib::Steganography::embed(const std::string &originalBitmapFil
     {
         throw runtime_error("Source file size is too large");
     }
-    
-    uint16_t sourceFileSize = static_cast<uint16_t>(rawSourceFileSize); 
+
+    uint16_t sourceFileSize = static_cast<uint16_t>(rawSourceFileSize);
 
     try
     {
@@ -69,17 +70,26 @@ void steganographyLib::Steganography::embed(const std::string &originalBitmapFil
     vector<char> buffer(FILE_CHUNK_SIZE);
     auto inputStreamExhausted = false;
     m_currentPixelIterator = m_sourceBitmap.begin();
-    
+
     m_pixelBitEncodingPos = 0; // index to the bit (0 to 7) where data will be stored in the current pixel.
     m_currentPixelColor = PixelColor::R;
     m_pPixel = &m_currentPixelIterator->r;
 
     // embed the source file size in the first 16 bits of encoded data, so that
     // the extract operation knows when to stop decoding bytes
-    vector<char> sourceFileSyzeBytes(sizeof(sourceFileSize));
-    std::memcpy(sourceFileSyzeBytes.data(), &sourceFileSize, sizeof(sourceFileSize));
-    encodeByte(sourceFileSyzeBytes[0]); // 8 least significant bytes of the file size
-    encodeByte(sourceFileSyzeBytes[1]); // 8 most significant bytes of the file size
+    vector<char> sourceFileSizeBytes(sizeof(sourceFileSize));
+    std::memcpy(sourceFileSizeBytes.data(), &sourceFileSize, sizeof(sourceFileSize));
+    encodeByte(sourceFileSizeBytes[0]); // 8 least significant bytes of the file size
+    encodeByte(sourceFileSizeBytes[1]); // 8 most significant bytes of the file size
+
+    // determine the correspondence between bytes of encoded data and grain for the callback function
+    int bytesPerProgress, encodedByteCount = 0;
+    if (m_progressCallback != nullptr)
+    {
+        assert(m_progressCallbackPercentGrain > 0); // m_progressCallbackPercentGrain is validated when setting the callback, so should never be 0.
+        int clicks = 100 / m_progressCallbackPercentGrain;
+        bytesPerProgress = sourceFileSize / clicks;
+    }
 
     while(!inputStreamExhausted  &&
           m_currentPixelIterator != m_sourceBitmap.end())
@@ -89,9 +99,14 @@ void steganographyLib::Steganography::embed(const std::string &originalBitmapFil
 
         if (bytesRead > 0)
         {
-            for (streamsize i = 0; i < bytesRead; i++) 
+            for (streamsize i = 0; i < bytesRead; i++)
             {
                 encodeByte(buffer[i]);
+                if (m_progressCallback != nullptr &&
+                   ++encodedByteCount % bytesPerProgress == 0)
+                {
+                    m_progressCallback(ceil((100*encodedByteCount)/(double)sourceFileSize));
+                }
             }
         }
 
@@ -101,7 +116,7 @@ void steganographyLib::Steganography::embed(const std::string &originalBitmapFil
         }
     }
     sourceDataFileStream.close();
-    m_sourceBitmap.save(destinationBitmapDataFilePath);    
+    m_sourceBitmap.save(destinationBitmapDataFilePath);
 }
 
 void steganographyLib::Steganography::extract(const std::string &sourceBitmapFilePath, const std::string &destinationDataFilePath, u_int8_t bitsPerPixel)
@@ -123,11 +138,11 @@ void steganographyLib::Steganography::extract(const std::string &sourceBitmapFil
 
     // Open and verify destinationDataFilePath
     auto destinationDataFileStream = ofstream(destinationDataFilePath, ios::binary);
-    if (!destinationDataFileStream || 
+    if (!destinationDataFileStream ||
         !destinationDataFileStream.is_open() ||
         destinationDataFileStream.bad())
     {
-        throw runtime_error("Could not open destination data file at " 
+        throw runtime_error("Could not open destination data file at "
             + destinationDataFilePath
             + " aborting extract operation.");
     }
@@ -135,7 +150,7 @@ void steganographyLib::Steganography::extract(const std::string &sourceBitmapFil
     // perform extract operation
     // for performance reasons, we write the output in chunks instead of one byte at a time
     vector<char> buffer(FILE_CHUNK_SIZE);
-    m_currentPixelIterator = m_sourceBitmap.begin();    
+    m_currentPixelIterator = m_sourceBitmap.begin();
     m_pixelBitEncodingPos = 0; // index to the bit (0 to 7) where data is encoded in the current pixel.
     m_currentPixelColor = PixelColor::R;
     m_pPixel = &m_currentPixelIterator->r;
@@ -144,22 +159,47 @@ void steganographyLib::Steganography::extract(const std::string &sourceBitmapFil
     // the first 16 bits of encoded data indicate the number of data bytes encoded in the file
     // so that the extract operation knows when to stop decoding bytes
     uint16_t dataFileSize;
-    vector<char> sourceFileSyzeBytes(sizeof(dataFileSize));
-    sourceFileSyzeBytes[0] = decodeByte(); // 8 least significant bytes of the file size
-    sourceFileSyzeBytes[1] = decodeByte(); // 8 most significant bytes of the file size
-    std::memcpy(&dataFileSize, sourceFileSyzeBytes.data(), sizeof(dataFileSize));
+    vector<char> sourceFileSizeBytes(sizeof(dataFileSize));
+    sourceFileSizeBytes[0] = decodeByte(); // 8 least significant bytes of the file size
+    sourceFileSizeBytes[1] = decodeByte(); // 8 most significant bytes of the file size
+    std::memcpy(&dataFileSize, sourceFileSizeBytes.data(), sizeof(dataFileSize));
 
-    while (dataFileSize &&
+    // verify that the bitmap can hold at least 'dataFileSize' bytes, based on the number of pixels
+    // in the image and the value provided for 'bitsPerPixel'
+    // this protects against cases where the bitmap that has been provided is not a valid encoded file
+    auto maxEncodedBytes = (m_sourceBitmap.width() * m_sourceBitmap.height() * bitsPerPixel)/8 - sizeof(dataFileSize);
+    if (dataFileSize > maxEncodedBytes)
+    {
+        throw runtime_error("Could not decode bitmap at "
+            + sourceBitmapFilePath
+            + " the bitmap may not be a valid encoded file or try selecting a higher value for 'bitsPerPixel'.");
+    }
+
+    // determine the correspondence between bytes of extracted data and grain for the callback function
+    int bytesPerProgress, extractedByteCount = 0;
+    if (m_progressCallback != nullptr)
+    {
+        assert(m_progressCallbackPercentGrain > 0); // m_progressCallbackPercentGrain is validated when setting the callback, so should never be 0.
+        int clicks = 100 / m_progressCallbackPercentGrain;
+        bytesPerProgress = dataFileSize / clicks;
+    }
+
+    while (extractedByteCount < dataFileSize &&
         m_currentPixelIterator != m_sourceBitmap.end())
     {
         auto dataByte = decodeByte();
         buffer[vectorPos++] = dataByte;
-        dataFileSize--;
 
         if (vectorPos == FILE_CHUNK_SIZE)
         {
             destinationDataFileStream.write(buffer.data(), buffer.size());
             vectorPos = 0;
+        }
+
+        if (m_progressCallback != nullptr &&
+            ++extractedByteCount % bytesPerProgress == 0)
+        {
+            m_progressCallback(ceil((100*extractedByteCount)/(double)dataFileSize));
         }
     }
 
@@ -172,6 +212,23 @@ void steganographyLib::Steganography::extract(const std::string &sourceBitmapFil
     destinationDataFileStream.close();
 }
 
+void steganographyLib::Steganography::registerProgressCallback(ProgressCallback callbackFunction, int percentGrain)
+{
+    if (callbackFunction == nullptr)
+    {
+        throw runtime_error("Invalid value for parameter callbackFunction. Must be a non-null function. Aborting operation.");
+    }
+
+    if (percentGrain < 0 ||
+        percentGrain > 100)
+    {
+        throw runtime_error("Invalid value for parameter percentGrain. Must be a value between 0 and 100. Aborting operation.");
+    }
+
+    m_progressCallback = callbackFunction;
+    m_progressCallbackPercentGrain = percentGrain;
+}
+
 void steganographyLib::Steganography::encodeByte(const char inputByte)
 {
     // loop with an index to the bit (0 to 7) that is being encoded from the data file byte
@@ -180,7 +237,7 @@ void steganographyLib::Steganography::encodeByte(const char inputByte)
     {
         // isolate the bit we are trying to encode on the LSB position of a byte
         uint8_t inputByteBit = LSB_BYTE_MASK & (inputByte >> inputByteBitEncodingPos);
-      
+
         // encode the bit at the encoding position
         // we encode bits starting at the least significant bit positions to ensure we shift
         // the color of the bit as little as possible.
@@ -204,7 +261,7 @@ void steganographyLib::Steganography::encodeByte(const char inputByte)
         if (m_pixelBitEncodingPos == m_bitsPerPixel)
         {
             nextBitmapByte();
-        }        
+        }
     }
 }
 
@@ -249,7 +306,7 @@ void steganographyLib::Steganography::nextBitmapByte()
             {
                 throw runtime_error("end of source bitmap reached");
             }
-            
+
             m_pPixel = &m_currentPixelIterator->r;
             break;
         default:
