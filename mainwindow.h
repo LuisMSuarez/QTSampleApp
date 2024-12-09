@@ -26,9 +26,10 @@ private:
     Ui::MainWindow *ui;
     QImage *sourceImage;
     QGraphicsScene* bitmapGraphicsScene;
-    void openImage();
-    void loadTextFile();
     QString selectedBitmapFilePath;
     QString selectedDataFilePath;
+    void openImage();
+    void loadTextFile();
+    void progressCallback(int progressPercentageComplete);
 };
 #endif // MAINWINDOW_H

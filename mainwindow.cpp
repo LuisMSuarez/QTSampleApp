@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelSourceBitmapFilePath->setText("Select bitmap file");
     ui->plainTextEdit->setReadOnly(true);
     bitmapGraphicsScene=new QGraphicsScene();
+    ui->progressBar->hide();
+    ui->statusbar->addPermanentWidget(ui->progressBar);
 }
 
 MainWindow::~MainWindow()
@@ -20,7 +22,6 @@ MainWindow::~MainWindow()
     delete sourceImage;
     delete ui;
 }
-
 
 void MainWindow::on_pushButtonFileSelection_clicked()
 {
@@ -81,6 +82,13 @@ void MainWindow::loadTextFile()
     file.close();
 }
 
+void MainWindow::progressCallback(int progressPercentageComplete)
+{
+    qDebug() << "Percent complete:" << progressPercentageComplete;
+    ui->progressBar->setValue(progressPercentageComplete);
+    QApplication::processEvents();
+}
+
 void MainWindow::on_pushButtonEmbed_clicked()
 {
     if (selectedBitmapFilePath.isNull() ||
@@ -100,6 +108,16 @@ void MainWindow::on_pushButtonEmbed_clicked()
     try
     {
         steganographyLib::Steganography steg;
+
+        // Excellent article that describes usage of c++ functions/lambdas
+        // https://blog.mbedded.ninja/programming/languages/c-plus-plus/callbacks/
+        // this allows usage of (non-static) member functions in callbacks, which cannot be used with c-style
+        // function pointers.
+        steg.registerProgressCallback([this](int num) -> void
+        {
+            return this->progressCallback(num);
+        }, /* percentGrain */ 1);
+        ui->progressBar->show();
         steg.embed(selectedBitmapFilePath.toStdString(),
                    selectedDataFilePath.toStdString(),
                    selectedBitmapFilePath.toStdString() + ".enc.bmp",
@@ -111,7 +129,6 @@ void MainWindow::on_pushButtonEmbed_clicked()
         QMessageBox::critical(this, "Encoding error", QString("Error during encoding operation\n") + e.what(), QMessageBox::Ok);
     }
 }
-
 
 void MainWindow::on_pushButtonExtract_clicked()
 {
@@ -125,6 +142,7 @@ void MainWindow::on_pushButtonExtract_clicked()
     try
     {
         steganographyLib::Steganography steg;
+        // steg.registerProgressCallback(progressCallback, /* percentGrain */ 1);
         steg.extract(selectedBitmapFilePath.toStdString(),
                    selectedBitmapFilePath.toStdString() + ".extracted",
                    ui->spinBoxBitsPerPixel->value());
@@ -135,4 +153,3 @@ void MainWindow::on_pushButtonExtract_clicked()
         QMessageBox::critical(this, "Extract error", QString("Error during extract operation\n") + e.what(), QMessageBox::Ok);
     }
 }
-
