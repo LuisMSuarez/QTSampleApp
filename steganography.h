@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>    // std::vector
-#include <cstdint>   // std::int*_t
+#include <vector>     // std::vector
+#include <cstdint>    // std::int*_t
+#include <functional> // std::function
 #include "bitmap.h"
 
 namespace steganographyLib
@@ -13,7 +14,7 @@ namespace steganographyLib
         B
     };
 
-    typedef void (*ProgressCallback)(int progressPercentageComplete);
+    typedef std::function<void(int)> ProgressCallback;
 
     class Steganography
     {
