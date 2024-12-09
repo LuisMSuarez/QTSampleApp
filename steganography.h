@@ -40,7 +40,7 @@ namespace steganographyLib
             /// @param callbackFunction The callback function that will be invoked.
             /// @param percentGrain value between 1 to 100, indicating after how many percentage units of completed work (over a total of 100) will the callback be invoked.
             //  Example, if 1 is provided, 100 callbacks will be invoked.  If 50 is provided 2 callbacks will be invoked.
-            void registerProgressCallback(std::function<void(int)> callbackFunction, int percentGrain = 10);
+            void registerProgressCallback(ProgressCallback callbackFunction, int percentGrain = 10);
         private:
             void encodeByte(const char inputByte);
             uint8_t decodeByte();
@@ -54,7 +54,7 @@ namespace steganographyLib
             bmp::Bitmap m_sourceBitmap;
             PixelColor m_currentPixelColor;
             uint8_t* m_pPixel;
-            std::function<void(int)> m_progressCallback;
+            ProgressCallback m_progressCallback;
             int m_progressCallbackPercentGrain;
     };
 }

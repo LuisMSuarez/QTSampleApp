@@ -212,7 +212,7 @@ void steganographyLib::Steganography::extract(const std::string &sourceBitmapFil
     destinationDataFileStream.close();
 }
 
-void steganographyLib::Steganography::registerProgressCallback(std::function<void(int)> callbackFunction, int percentGrain)
+void steganographyLib::Steganography::registerProgressCallback(ProgressCallback callbackFunction, int percentGrain)
 {
     if (callbackFunction == nullptr)
     {
