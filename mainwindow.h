@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtWidgets>
+#include <functional> // std::function
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,13 +24,19 @@ private slots:
     void on_pushButtonExtract_clicked();
 
 private:
+    // Member variables
     Ui::MainWindow *ui;
     QImage *sourceImage;
     QGraphicsScene* bitmapGraphicsScene;
     QString selectedBitmapFilePath;
     QString selectedDataFilePath;
+
+    // Methods
     void openImage();
     void loadTextFile();
+    void initializeActivity();
     void progressCallback(int progressPercentageComplete);
+    void finalizeActivity();
+    void activityWrapper(std::function<void()> activity);
 };
 #endif // MAINWINDOW_H

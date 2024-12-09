@@ -82,11 +82,32 @@ void MainWindow::loadTextFile()
     file.close();
 }
 
+void MainWindow::initializeActivity()
+{
+    ui->progressBar->setValue(0);
+    ui->progressBar->show();
+}
+
 void MainWindow::progressCallback(int progressPercentageComplete)
 {
     qDebug() << "Percent complete:" << progressPercentageComplete;
     ui->progressBar->setValue(progressPercentageComplete);
     QApplication::processEvents();
+}
+
+void MainWindow::finalizeActivity()
+{
+    ui->statusbar->showMessage("Operation complete", 5000);
+
+    // Hide the progress bar after 5 seconds
+    QTimer::singleShot(5000, ui->progressBar, &QWidget::hide);
+}
+
+void MainWindow::activityWrapper(std::function<void()> activity)
+{
+    initializeActivity();
+    activity();
+    finalizeActivity();
 }
 
 void MainWindow::on_pushButtonEmbed_clicked()
@@ -113,16 +134,17 @@ void MainWindow::on_pushButtonEmbed_clicked()
         // https://blog.mbedded.ninja/programming/languages/c-plus-plus/callbacks/
         // this allows usage of (non-static) member functions in callbacks, which cannot be used with c-style
         // function pointers.
-        steg.registerProgressCallback([this](int num) -> void
+        steg.registerProgressCallback([this](int progressPercentageComplete) -> void
         {
-            return this->progressCallback(num);
+            return this->progressCallback(progressPercentageComplete);
         }, /* percentGrain */ 1);
-        ui->progressBar->show();
-        steg.embed(selectedBitmapFilePath.toStdString(),
-                   selectedDataFilePath.toStdString(),
-                   selectedBitmapFilePath.toStdString() + ".enc.bmp",
-                   ui->spinBoxBitsPerPixel->value());
-        ui->statusbar->showMessage("Embed operation complete", 5000);
+        activityWrapper([this, &steg]()->void
+        {
+            steg.embed(selectedBitmapFilePath.toStdString(),
+                       selectedDataFilePath.toStdString(),
+                       selectedBitmapFilePath.toStdString() + ".enc.bmp",
+                       ui->spinBoxBitsPerPixel->value());
+        });
     }
     catch (std::runtime_error &e)
     {
