@@ -106,7 +106,16 @@ void MainWindow::finalizeActivity()
 void MainWindow::activityWrapper(std::function<void()> activity)
 {
     initializeActivity();
-    activity();
+
+    try
+    {
+        activity();
+    }
+    catch (std::runtime_error &e)
+    {
+        QMessageBox::critical(this, "Encoding/extraction error", QString("Error during operation\n") + e.what(), QMessageBox::Ok);
+    }
+
     finalizeActivity();
 }
 
@@ -126,30 +135,23 @@ void MainWindow::on_pushButtonEmbed_clicked()
         return;
     }
 
-    try
-    {
-        steganographyLib::Steganography steg;
+    steganographyLib::Steganography steg;
 
-        // Excellent article that describes usage of c++ functions/lambdas
-        // https://blog.mbedded.ninja/programming/languages/c-plus-plus/callbacks/
-        // this allows usage of (non-static) member functions in callbacks, which cannot be used with c-style
-        // function pointers.
-        steg.registerProgressCallback([this](int progressPercentageComplete) -> void
-        {
-            return this->progressCallback(progressPercentageComplete);
-        }, /* percentGrain */ 1);
-        activityWrapper([this, &steg]()->void
-        {
-            steg.embed(selectedBitmapFilePath.toStdString(),
-                       selectedDataFilePath.toStdString(),
-                       selectedBitmapFilePath.toStdString() + ".enc.bmp",
-                       ui->spinBoxBitsPerPixel->value());
-        });
-    }
-    catch (std::runtime_error &e)
+    // Excellent article that describes usage of c++ functions/lambdas
+    // https://blog.mbedded.ninja/programming/languages/c-plus-plus/callbacks/
+    // this allows usage of (non-static) member functions in callbacks, which cannot be used with c-style
+    // function pointers.
+    steg.registerProgressCallback([this](int progressPercentageComplete) -> void
     {
-        QMessageBox::critical(this, "Encoding error", QString("Error during encoding operation\n") + e.what(), QMessageBox::Ok);
-    }
+        return this->progressCallback(progressPercentageComplete);
+    }, /* percentGrain */ 1);
+    activityWrapper([this, &steg]()->void
+    {
+        steg.embed(selectedBitmapFilePath.toStdString(),
+                   selectedDataFilePath.toStdString(),
+                   selectedBitmapFilePath.toStdString() + ".enc.bmp",
+                   ui->spinBoxBitsPerPixel->value());
+    });
 }
 
 void MainWindow::on_pushButtonExtract_clicked()
@@ -161,17 +163,16 @@ void MainWindow::on_pushButtonExtract_clicked()
         return;
     }
 
-    try
+    steganographyLib::Steganography steg;
+    steg.registerProgressCallback([this](int progressPercentageComplete) -> void
     {
-        steganographyLib::Steganography steg;
-        // steg.registerProgressCallback(progressCallback, /* percentGrain */ 1);
+        return this->progressCallback(progressPercentageComplete);
+    }, /* percentGrain */ 1);
+
+    activityWrapper([this, &steg]()->void
+    {
         steg.extract(selectedBitmapFilePath.toStdString(),
-                   selectedBitmapFilePath.toStdString() + ".extracted",
-                   ui->spinBoxBitsPerPixel->value());
-        ui->statusbar->showMessage("Extract operation complete", 5000);
-    }
-    catch (std::runtime_error &e)
-    {
-        QMessageBox::critical(this, "Extract error", QString("Error during extract operation\n") + e.what(), QMessageBox::Ok);
-    }
+                     selectedBitmapFilePath.toStdString() + ".extracted",
+                     ui->spinBoxBitsPerPixel->value());
+    });
 }
