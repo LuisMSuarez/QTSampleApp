@@ -23,6 +23,8 @@ Controls/utilities used:
 - QSpinBox
 - QStatusBar
 - QFileDialog
+- QGroupBox
+- QProgressBar
 - QMessageBox
 
 Layouts:
